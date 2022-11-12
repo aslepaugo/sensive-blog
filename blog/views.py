@@ -55,7 +55,7 @@ def index(request):
         post.comments_count = count_by_id[post.id]
 
 
-    popular_tags = Tag.objects.annotate(tags_count=Count('posts')).order_by('-tags_count')
+    popular_tags = Tag.objects.popular()[:5]
     most_popular_tags = popular_tags[:5]
 
     context = {
@@ -95,9 +95,7 @@ def post_detail(request, slug):
         'tags': [serialize_tag(tag) for tag in related_tags],
     }
 
-    all_tags = Tag.objects.all()
-    popular_tags = sorted(all_tags, key=get_related_posts_count)
-    most_popular_tags = popular_tags[-5:]
+    most_popular_tags = Tag.objects.popular()[:5]
 
     most_popular_posts = []  # TODO. Как это посчитать?
 
