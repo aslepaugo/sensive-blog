@@ -30,11 +30,15 @@ python3 manage.py runserver
 
 Часть настроек проекта берётся из переменных окружения. Чтобы их определить, создайте файл `.env` рядом с `manage.py` и запишите туда данные в таком формате: `ПЕРЕМЕННАЯ=значение`.
 
-Доступны 3 переменные:
+Доступны 8 переменныx:
 - `DEBUG` — дебаг-режим. Поставьте `True`, чтобы увидеть отладочную информацию в случае ошибки.
 - `SECRET_KEY` — секретный ключ проекта
-- `DATABASE_FILEPATH` — полный путь к файлу базы данных SQLite, например: `/home/user/schoolbase.sqlite3`
-- `ALLOWED_HOSTS` — см [документацию Django](https://docs.djangoproject.com/en/3.1/ref/settings/#allowed-hosts)
+- `DATABASE_FILEPATH` — полный путь к файлу базы данных SQLite, например: `/home/user/schoolbase.sqlite3`.
+- `ALLOWED_HOSTS` — см [документацию Django](https://docs.djangoproject.com/en/3.1/ref/settings/#allowed-hosts).
+- `FRESH_POSTS_LIMIT` — количество последних постов на странице.
+- `POPULAR_POSTS_LIMIT` — количество популярных (наибольшее количествои лайков) постов на страницу.
+- `POPULAR_TAGS_LIMIT` — количество популярных тегов на странице.
+- `POSTS_IN_TAG_LIMIT` —  количество постов на странице тега.
 
 
 ## Цели проекта

@@ -2,7 +2,7 @@ from django.shortcuts import render
 from blog.models import Post, Tag
 from django.db.models import Count, Prefetch
 
-from .settings import FRESH_POSTS_LIMIT, POPULAR_POSTS_LIMIT, POPULAR_TAGS_LIMIT, POSTS_IN_TAG_LIMIT
+from django.conf import settings 
 
 
 def serialize_post(post):
@@ -29,14 +29,14 @@ def serialize_tag(tag):
 def index(request):
     most_fresh_posts = Post.objects \
         .annotate(comments_count=Count('comments')) \
-        .order_by('-published_at')[:FRESH_POSTS_LIMIT] \
+        .order_by('-published_at')[:settings.FRESH_POSTS_LIMIT] \
         .prefetch_related('author') \
         .prefetch_related(Prefetch('tags', queryset=Tag.objects.annotate(Count('posts'))))
-    most_popular_posts = Post.objects.popular()[:POPULAR_POSTS_LIMIT]\
+    most_popular_posts = Post.objects.popular()[:settings.POPULAR_POSTS_LIMIT]\
         .prefetch_related('author')\
         .prefetch_related(Prefetch('tags', queryset=Tag.objects.annotate(Count('posts'))))\
         .fetch_with_comments_count()
-    most_popular_tags = Tag.objects.popular()[:POPULAR_TAGS_LIMIT].annotate(Count('posts'))
+    most_popular_tags = Tag.objects.popular()[:settings.POPULAR_TAGS_LIMIT].annotate(Count('posts'))
 
     context = {
         'most_popular_posts': [
@@ -75,11 +75,11 @@ def post_detail(request, slug):
         'slug': post.slug,
         'tags': [serialize_tag(tag) for tag in related_tags],
     }
-    most_popular_posts = Post.objects.popular()[:POPULAR_POSTS_LIMIT]\
+    most_popular_posts = Post.objects.popular()[:settings.POPULAR_POSTS_LIMIT]\
         .prefetch_related('author')\
         .prefetch_related(Prefetch('tags', queryset=Tag.objects.annotate(Count('posts'))))\
         .fetch_with_comments_count()
-    most_popular_tags = Tag.objects.popular()[:POPULAR_TAGS_LIMIT].annotate(Count('posts'))
+    most_popular_tags = Tag.objects.popular()[:settings.POPULAR_TAGS_LIMIT].annotate(Count('posts'))
     context = {
         'post': serialized_post,
         'popular_tags': [serialize_tag(tag) for tag in most_popular_tags],
@@ -91,14 +91,14 @@ def post_detail(request, slug):
 
 
 def tag_filter(request, tag_title):
-    most_popular_posts = Post.objects.popular()[:POPULAR_POSTS_LIMIT]\
+    most_popular_posts = Post.objects.popular()[:settings.POPULAR_POSTS_LIMIT]\
         .prefetch_related('author')\
         .prefetch_related(Prefetch('tags', queryset=Tag.objects.annotate(Count('posts'))))\
         .fetch_with_comments_count()
-    most_popular_tags = Tag.objects.popular()[:POPULAR_TAGS_LIMIT].annotate(Count('posts'))
+    most_popular_tags = Tag.objects.popular()[:settings.POPULAR_TAGS_LIMIT].annotate(Count('posts'))
     tag = Tag.objects.get(title=tag_title)
     related_posts = tag.posts \
-        .all()[:POSTS_IN_TAG_LIMIT] \
+        .all()[:settings.POSTS_IN_TAG_LIMIT] \
         .prefetch_related(Prefetch('tags', queryset=Tag.objects.annotate(Count('posts')))) \
         .prefetch_related('author') \
         .fetch_with_comments_count()
